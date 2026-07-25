@@ -1,5 +1,8 @@
 
 import java.sql.*;
+
+import com.util.DBconnection;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -28,6 +31,7 @@ public class managementlogin extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter obj=response.getWriter();
+		Connection con = DBconnection.getConnection();
 		String m=request.getParameter("a");
 		int n=Integer.parseInt(request.getParameter("b"));
 		try {

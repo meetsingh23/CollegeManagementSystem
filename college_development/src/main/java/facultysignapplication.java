@@ -1,5 +1,8 @@
 
 import java.sql.*;
+
+import com.util.DBconnection;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -28,6 +31,7 @@ public class facultysignapplication extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter p=response.getWriter();
+		Connection con = DBconnection.getConnection();
 		String uid=request.getParameter("a");
 		String uname=request.getParameter("b");
 		int pass=Integer.parseInt(request.getParameter("c"));
