@@ -1,15 +1,17 @@
-<div style="width:80%; margin:60px auto 30px auto; text-align:center; color:white;">
+FROM maven:3.9.9-eclipse-temurin-24 AS build
 
-    <h1 style="font-size:48px; margin-bottom:15px;">Contact Us</h1>
+WORKDIR /app
 
-    <div style="width:90px; height:3px; background:#D4A017; margin:0 auto 25px auto;"></div>
+COPY . .
 
-    <p style="font-size:22px; line-height:1.8;">
-        We value your questions, feedback, and suggestions. If you have any queries
-        regarding the College Management System, please feel free to contact us using
-        the form below. Our team will review your message and respond as soon as
-        possible. The contact details provided on this page are for demonstration
-        purposes only as part of this academic project.
-    </p>
+RUN mvn clean package -DskipTests
 
-</div>
+FROM tomcat:11.0-jdk24-temurin
+
+RUN rm -rf /usr/local/tomcat/webapps/*
+
+COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
+
+EXPOSE 8080
+
+CMD ["catalina.sh", "run"]
