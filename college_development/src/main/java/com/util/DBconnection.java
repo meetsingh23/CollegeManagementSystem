@@ -9,10 +9,10 @@ public class DBconnection {
         Connection con = null;
         try {
 
-            String host = System.getenv("brjmrnxaz6zd919k9efp-mysql.services.clever-cloud.com");
-            String dbName = System.getenv("brjmrnxaz6zd919k9efp");
-            String user = System.getenv("uejsm72p8yyls9dl");
-            String password = System.getenv("GKWNlbY20vxu7x2iHDd4");
+        	String host = System.getenv("DB_HOST");
+        	String dbName = System.getenv("DB_NAME");
+        	String user = System.getenv("DB_USER");
+        	String password = System.getenv("DB_PASS");
 
             String url = "jdbc:mysql://" + host + ":3306/" + dbName + "?useSSL=false&allowPublicKeyRetrieval=true";
 
