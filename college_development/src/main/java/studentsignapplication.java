@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import com.util.DBconnection;
 
 /**
  * Servlet implementation class studentsignapplication
@@ -19,6 +20,7 @@ public class studentsignapplication extends HttpServlet {
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Connection con = DBconnection.getConnection();
 		PrintWriter p=response.getWriter();
 		String firstName = request.getParameter("a");
 		String lastName = request.getParameter("b");
