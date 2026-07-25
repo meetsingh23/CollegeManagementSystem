@@ -1,4 +1,4 @@
-FROM maven:3.9.9-eclipse-temurin-24 AS build
+FROM maven:3.9.9-eclipse-temurin-21 AS build
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ COPY . .
 
 RUN mvn clean package -DskipTests
 
-FROM tomcat:11.0-jdk24-temurin
+FROM tomcat:10.1-jdk21-temurin
 
 RUN rm -rf /usr/local/tomcat/webapps/*
 
