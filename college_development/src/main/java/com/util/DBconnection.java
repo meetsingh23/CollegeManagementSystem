@@ -8,11 +8,10 @@ public class DBconnection {
     public static Connection getConnection() {
         Connection con = null;
         try {
-
-        	String host = System.getenv("DB_HOST");
-        	String dbName = System.getenv("DB_NAME");
-        	String user = System.getenv("DB_USER");
-        	String password = System.getenv("DB_PASS");
+            String host = System.getenv("DB_HOST");
+            String dbName = System.getenv("DB_NAME");
+            String user = System.getenv("DB_USER");
+            String password = System.getenv("DB_PASS");
 
             String url = "jdbc:mysql://" + host + ":3306/" + dbName + "?useSSL=false&allowPublicKeyRetrieval=true";
 
