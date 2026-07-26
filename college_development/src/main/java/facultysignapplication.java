@@ -37,7 +37,7 @@ public class facultysignapplication extends HttpServlet {
 		int pass=Integer.parseInt(request.getParameter("c"));
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
-	        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/project_development", "root", "YOUR OWN SQL PASSWORD");
+	        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/project_development", "root", "meetsingh");
 	        PreparedStatement pp=connection.prepareStatement("insert into faculty values(?,?,?);");
 	        pp.setString(1, uid);
 	        pp.setString(2, uname);
