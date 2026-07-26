@@ -29,11 +29,12 @@ COPY --from=builder /app/webapp /usr/local/tomcat/webapps/ROOT/
 
 RUN cp /usr/local/tomcat/webapps/ROOT/welcome.jsp /usr/local/tomcat/webapps/ROOT/index.jsp || true
 
-# 4. Create SQL Init File with Database, Tables, Password & Privileges
-# YAHAN APNE TABLES KO CREATE KARNE KI QUERIES WRITE KAREIN:
+# 4. Create SQL Init File with Exact Database Schemas, Password & Privileges
 RUN echo "CREATE DATABASE IF NOT EXISTS project_development;" > /docker-entrypoint-initdb.sql && \
     echo "USE project_development;" >> /docker-entrypoint-initdb.sql && \
-    echo "CREATE TABLE IF NOT EXISTS sign (id VARCHAR(100), name VARCHAR(100), password VARCHAR(100));" >> /docker-entrypoint-initdb.sql && \
+    echo "CREATE TABLE IF NOT EXISTS sign (first_name VARCHAR(20), last_name VARCHAR(20), email VARCHAR(100), pass INT, date DATE);" >> /docker-entrypoint-initdb.sql && \
+    echo "CREATE TABLE IF NOT EXISTS management (id VARCHAR(20), user_id VARCHAR(20), password INT);" >> /docker-entrypoint-initdb.sql && \
+    echo "CREATE TABLE IF NOT EXISTS faculty (id VARCHAR(20), user_id VARCHAR(20), password INT);" >> /docker-entrypoint-initdb.sql && \
     echo "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'meetsingh';" >> /docker-entrypoint-initdb.sql && \
     echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;" >> /docker-entrypoint-initdb.sql && \
     echo "FLUSH PRIVILEGES;" >> /docker-entrypoint-initdb.sql
