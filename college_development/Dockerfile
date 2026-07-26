@@ -29,7 +29,7 @@ COPY --from=builder /app/webapp /usr/local/tomcat/webapps/ROOT/
 
 RUN cp /usr/local/tomcat/webapps/ROOT/welcome.jsp /usr/local/tomcat/webapps/ROOT/index.jsp || true
 
-# 4. Create SQL Init File with Exact Database Schemas, Password & Privileges
+# 4. Create SQL Init File with Exact Tables
 RUN echo "CREATE DATABASE IF NOT EXISTS project_development;" > /docker-entrypoint-initdb.sql && \
     echo "USE project_development;" >> /docker-entrypoint-initdb.sql && \
     echo "CREATE TABLE IF NOT EXISTS sign (first_name VARCHAR(20), last_name VARCHAR(20), email VARCHAR(100), pass INT, date DATE);" >> /docker-entrypoint-initdb.sql && \
