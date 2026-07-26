@@ -26,8 +26,11 @@ RUN apt-get update && \
 # Clean default webapps
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Copy your original webapp
+# Copy webapp to ROOT
 COPY --from=builder /app/webapp /usr/local/tomcat/webapps/ROOT/
+
+# Map root URL to welcome.jsp explicitly
+RUN cp /usr/local/tomcat/webapps/ROOT/welcome.jsp /usr/local/tomcat/webapps/ROOT/index.jsp 2>/dev/null || true
 
 # Setup SQL Database and Tables
 RUN echo "CREATE DATABASE IF NOT EXISTS project_development;" > /docker-entrypoint-initdb.sql && \
@@ -42,10 +45,9 @@ RUN echo "CREATE DATABASE IF NOT EXISTS project_development;" > /docker-entrypoi
 
 EXPOSE 8080
 
-# Start MySQL first, run database init script, THEN launch Tomcat
 CMD mkdir -p /var/run/mysqld /var/lib/mysql-files && \
     chown -R mysql:mysql /var/run/mysqld /var/lib/mysql /var/lib/mysql-files && \
     mysqld --user=mysql --daemonize && \
-    sleep 5 && \
+    sleep 4 && \
     mysql -u root < /docker-entrypoint-initdb.sql 2>/dev/null || true && \
     catalina.sh run
