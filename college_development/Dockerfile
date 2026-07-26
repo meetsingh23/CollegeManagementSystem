@@ -10,7 +10,7 @@ ADD https://repo1.maven.org/maven2/jakarta/servlet/jakarta.servlet-api/6.0.0/jak
 
 RUN mkdir -p webapp/WEB-INF/classes
 
-# Java files compile karein (without hiding errors)
+# Java files compile karein
 RUN javac -cp "servlet-api.jar:webapp/WEB-INF/lib/*" -d webapp/WEB-INF/classes $(find src -name "*.java")
 
 # --- Stage 2: Production Container with Tomcat + MySQL ---
@@ -27,10 +27,11 @@ COPY --from=builder /app/webapp /usr/local/tomcat/webapps/ROOT/
 
 RUN cp /usr/local/tomcat/webapps/ROOT/welcome.jsp /usr/local/tomcat/webapps/ROOT/index.jsp || true
 
-# 4. MySQL setup: DB create karein aur root user allow karein
+# 4. MySQL setup: Root user permission aur database fix
 RUN service mysql start && \
     mysql -e "CREATE DATABASE IF NOT EXISTS project;" && \
     mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';" && \
+    mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;" && \
     mysql -e "FLUSH PRIVILEGES;"
 
 EXPOSE 8080
