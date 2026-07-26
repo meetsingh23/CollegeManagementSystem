@@ -36,7 +36,7 @@ public class retrieve extends HttpServlet {
         PrintWriter obj = response.getWriter();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/project_development","root","YOUR OWN SQL PASSWORD");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/project_development","root","meetsingh");
             String table = request.getParameter("table");
             if (table == null || table.equals("")) {
                 table = "sign";
