@@ -27,14 +27,13 @@ COPY --from=builder /app/webapp /usr/local/tomcat/webapps/ROOT/
 
 RUN cp /usr/local/tomcat/webapps/ROOT/welcome.jsp /usr/local/tomcat/webapps/ROOT/index.jsp || true
 
-# 4. MySQL setup: Correct DB name (project_development) and password (meetsingh)
-RUN service mysql start && \
-    mysql -e "CREATE DATABASE IF NOT EXISTS project_development;" && \
-    mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'meetsingh';" && \
-    mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;" && \
-    mysql -e "FLUSH PRIVILEGES;"
-
 EXPOSE 8080
 
-# 5. MySQL service aur Tomcat dono ko run karein
-CMD service mysql start && catalina.sh run
+# 4. Container start hone par MySQL start, Database & Password configure karke Tomcat chalayein
+CMD service mysql start && \
+    sleep 3 && \
+    mysql -u root -e "CREATE DATABASE IF NOT EXISTS project_development;" && \
+    mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'meetsingh';" && \
+    mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;" && \
+    mysql -u root -e "FLUSH PRIVILEGES;" && \
+    catalina.sh run
