@@ -10,7 +10,7 @@ ADD https://repo1.maven.org/maven2/jakarta/servlet/jakarta.servlet-api/6.0.0/jak
 
 RUN mkdir -p webapp/WEB-INF/classes
 
-# Java files compile karein
+# Java files compile
 RUN javac -cp "servlet-api.jar:webapp/WEB-INF/lib/*" -d webapp/WEB-INF/classes $(find src -name "*.java")
 
 # --- Stage 2: Production Container with Tomcat + MySQL ---
@@ -29,7 +29,7 @@ COPY --from=builder /app/webapp /usr/local/tomcat/webapps/ROOT/
 
 RUN cp /usr/local/tomcat/webapps/ROOT/welcome.jsp /usr/local/tomcat/webapps/ROOT/index.jsp || true
 
-# 4. Create SQL Init File with Exact Tables
+# 4. Create SQL Init File with Exact Database Schemas, Password & Privileges
 RUN echo "CREATE DATABASE IF NOT EXISTS project_development;" > /docker-entrypoint-initdb.sql && \
     echo "USE project_development;" >> /docker-entrypoint-initdb.sql && \
     echo "CREATE TABLE IF NOT EXISTS sign (first_name VARCHAR(20), last_name VARCHAR(20), email VARCHAR(100), pass INT, date DATE);" >> /docker-entrypoint-initdb.sql && \
