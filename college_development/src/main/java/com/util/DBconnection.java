@@ -8,25 +8,25 @@ public class DBconnection {
     public static Connection getConnection() {
         Connection con = null;
         try {
-            // Read from ENV, if null use exact Clever Cloud credentials as fallback
+            // Read credentials dynamically from Environment Variables
             String host = System.getenv("DB_HOST");
             if (host == null || host.isEmpty()) {
-                host = "brjmrnxaz6zd919k9efp-mysql.services.clever-cloud.com";
+                host = "your_db_host"; // e.g. localhost or external host
             }
 
             String dbName = System.getenv("DB_NAME");
             if (dbName == null || dbName.isEmpty()) {
-                dbName = "brjmrnxaz6zd919k9efp";
+                dbName = "your_db_name";
             }
 
             String user = System.getenv("DB_USER");
             if (user == null || user.isEmpty()) {
-                user = "uejsm72p8yyls9dl";
+                user = "your_db_user";
             }
 
             String password = System.getenv("DB_PASS");
             if (password == null || password.isEmpty()) {
-                password = "GKWN1bY20vxu7x2iHDd4";
+                password = "your_db_password";
             }
 
             String url = "jdbc:mysql://" + host + ":3306/" + dbName 
