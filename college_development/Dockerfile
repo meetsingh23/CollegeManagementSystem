@@ -4,17 +4,18 @@ FROM eclipse-temurin:21-jdk AS builder
 WORKDIR /app
 
 COPY src/main/webapp ./webapp
-COPY src/main/java ./src
+COPY src ./src
 
-# Create proper WEB-INF directories
+# Create WEB-INF directories
 RUN mkdir -p webapp/WEB-INF/lib webapp/WEB-INF/classes
 
-# Download Tomcat/Servlet & JDBC Dependencies
+# Download dependencies
 ADD https://repo1.maven.org/maven2/jakarta/servlet/jakarta.servlet-api/6.0.0/jakarta.servlet-api-6.0.0.jar ./webapp/WEB-INF/lib/
+ADD https://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/4.0.1/javax.servlet-api-4.0.1.jar ./webapp/WEB-INF/lib/
 ADD https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.3.0/mysql-connector-j-8.3.0.jar ./webapp/WEB-INF/lib/
 
-# Strictly compile ALL java files into classes directory
-RUN javac -cp "webapp/WEB-INF/lib/*" -d webapp/WEB-INF/classes $(find src/main/java -name "*.java")
+# Find and compile ALL .java files from the entire src directory safely
+RUN javac -cp "webapp/WEB-INF/lib/*" -d webapp/WEB-INF/classes $(find src -name "*.java")
 
 # --- Stage 2: Production Container with Tomcat 9 + MySQL ---
 FROM tomcat:9.0-jdk21-temurin
@@ -30,7 +31,7 @@ RUN rm -rf /usr/local/tomcat/webapps/*
 # Copy WebApp to ROOT
 COPY --from=builder /app/webapp /usr/local/tomcat/webapps/ROOT/
 
-# Map welcome.jsp as fallback index page
+# Map welcome.jsp as index page fallback
 RUN cp /usr/local/tomcat/webapps/ROOT/welcome.jsp /usr/local/tomcat/webapps/ROOT/index.jsp 2>/dev/null || true
 
 # Init Database
