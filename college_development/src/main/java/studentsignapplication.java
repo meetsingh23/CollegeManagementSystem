@@ -30,7 +30,7 @@ public class studentsignapplication extends HttpServlet {
 
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/project_development", "root", "meetsingh");
+			Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/project_development", "root", "YOUR OWN SQL PASSWORD");
 
 			PreparedStatement pp = connection.prepareStatement(
 				"insert into sign values(?,?,?,?,?);"
