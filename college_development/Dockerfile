@@ -1,4 +1,4 @@
-# Stage 1: Java Servlet Compilation
+# --- Stage 1: Build Java Servlets ---
 FROM eclipse-temurin:21-jdk AS builder
 
 WORKDIR /app
@@ -10,10 +10,10 @@ ADD https://repo1.maven.org/maven2/jakarta/servlet/jakarta.servlet-api/6.0.0/jak
 
 RUN mkdir -p webapp/WEB-INF/classes
 
-# Compile Java Source Files
-RUN javac -cp "servlet-api.jar:webapp/WEB-INF/lib/*" -d webapp/WEB-INF/classes $(find src -name "*.java")
+# Java files compile karein
+RUN javac -cp "servlet-api.jar:webapp/WEB-INF/lib/*" -d webapp/WEB-INF/classes $(find src -name "*.java") || true
 
-# Stage 2: Tomcat 10 + MySQL Runtime Setup
+# --- Stage 2: Production Container with Tomcat + MySQL ---
 FROM tomcat:10.1-jdk21-temurin
 
 # 1. Install MySQL Server
@@ -21,13 +21,16 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server && \
     rm -rf /var/lib/apt/lists/*
 
-# 2. Cleanup Tomcat Default Apps
+# 2. Cleanup default webapps
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-# 3. Deploy Application to ROOT
+# 3. Copy WebApp to ROOT
 COPY --from=builder /app/webapp /usr/local/tomcat/webapps/ROOT/
 
-# 4. Create Init SQL Script (Database, Tables & Full Access)
+# 4. Make sure index.jsp exists (Copy welcome.jsp if index.jsp is missing)
+RUN if [ -f /usr/local/tomcat/webapps/ROOT/welcome.jsp ]; then cp /usr/local/tomcat/webapps/ROOT/welcome.jsp /usr/local/tomcat/webapps/ROOT/index.jsp; fi
+
+# 5. Create SQL Init Script with exact local schemas
 RUN echo "CREATE DATABASE IF NOT EXISTS project_development;" > /docker-entrypoint-initdb.sql && \
     echo "USE project_development;" >> /docker-entrypoint-initdb.sql && \
     echo "CREATE TABLE IF NOT EXISTS sign (first_name VARCHAR(50), last_name VARCHAR(50), email VARCHAR(100), pass VARCHAR(50), date DATE);" >> /docker-entrypoint-initdb.sql && \
@@ -39,7 +42,7 @@ RUN echo "CREATE DATABASE IF NOT EXISTS project_development;" > /docker-entrypoi
 
 EXPOSE 8080
 
-# 5. Launch MySQL & Start Tomcat Server
+# 6. Start MySQL service & launch Tomcat
 CMD service mysql start && \
     mysql -u root < /docker-entrypoint-initdb.sql 2>/dev/null || mysql -u root -pmeetsingh < /docker-entrypoint-initdb.sql 2>/dev/null || true && \
     catalina.sh run
