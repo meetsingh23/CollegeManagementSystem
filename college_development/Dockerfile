@@ -9,16 +9,15 @@ COPY src ./src
 # Create WEB-INF directories
 RUN mkdir -p webapp/WEB-INF/lib webapp/WEB-INF/classes
 
-# Download dependencies
+# Download Jakarta Servlet API & MySQL Driver
 ADD https://repo1.maven.org/maven2/jakarta/servlet/jakarta.servlet-api/6.0.0/jakarta.servlet-api-6.0.0.jar ./webapp/WEB-INF/lib/
-ADD https://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/4.0.1/javax.servlet-api-4.0.1.jar ./webapp/WEB-INF/lib/
 ADD https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.3.0/mysql-connector-j-8.3.0.jar ./webapp/WEB-INF/lib/
 
-# Find and compile ALL .java files from the entire src directory safely
+# Compile ALL .java files into WEB-INF/classes
 RUN javac -cp "webapp/WEB-INF/lib/*" -d webapp/WEB-INF/classes $(find src -name "*.java")
 
-# --- Stage 2: Production Container with Tomcat 9 + MySQL ---
-FROM tomcat:9.0-jdk21-temurin
+# --- Stage 2: Production Container with Tomcat 11 + MySQL ---
+FROM tomcat:11.0-jdk21-temurin
 
 # Install MySQL Server
 RUN apt-get update && \
