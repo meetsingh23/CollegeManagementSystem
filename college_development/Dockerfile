@@ -10,32 +10,34 @@ ADD https://repo1.maven.org/maven2/jakarta/servlet/jakarta.servlet-api/6.0.0/jak
 
 RUN mkdir -p webapp/WEB-INF/classes
 
+# Java files compile karein
 RUN javac -cp "servlet-api.jar:webapp/WEB-INF/lib/*" -d webapp/WEB-INF/classes $(find src -name "*.java")
 
 # --- Stage 2: Production Container with Tomcat + MySQL ---
 FROM tomcat:10.1-jdk21-temurin
 
+# 1. Install MySQL Server
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server && \
     rm -rf /var/lib/apt/lists/*
 
+# 2. Cleanup default webapps
 RUN rm -rf /usr/local/tomcat/webapps/*
 
+# 3. Copy WebApp
 COPY --from=builder /app/webapp /usr/local/tomcat/webapps/ROOT/
 
 RUN cp /usr/local/tomcat/webapps/ROOT/welcome.jsp /usr/local/tomcat/webapps/ROOT/index.jsp || true
 
-# --- Properly initialize MySQL data dir at BUILD time (root, no password) ---
-RUN rm -rf /var/lib/mysql && \
-    mkdir -p /var/lib/mysql /var/run/mysqld && \
-    chown -R mysql:mysql /var/lib/mysql /var/run/mysqld && \
-    mysqld --initialize-insecure --user=mysql --datadir=/var/lib/mysql
+# 4. Create SQL Init File for Database & Password Setup
+RUN echo "CREATE DATABASE IF NOT EXISTS project_development;" > /docker-entrypoint-initdb.sql && \
+    echo "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'meetsingh';" >> /docker-entrypoint-initdb.sql && \
+    echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;" >> /docker-entrypoint-initdb.sql && \
+    echo "FLUSH PRIVILEGES;" >> /docker-entrypoint-initdb.sql
 
 EXPOSE 8080
 
+# 5. Start MySQL with init script, then run Tomcat
 CMD service mysql start && \
-    for i in $(seq 1 30); do mysqladmin --protocol=socket -u root ping 2>/dev/null && break; sleep 1; done && \
-    mysql --protocol=socket -u root -e "CREATE DATABASE IF NOT EXISTS project_development;" && \
-    mysql --protocol=socket -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'meetsingh';" && \
-    mysql --protocol=socket -u root -e "FLUSH PRIVILEGES;" && \
+    mysql -u root < /docker-entrypoint-initdb.sql 2>/dev/null || mysql -u root -pmeetsingh < /docker-entrypoint-initdb.sql 2>/dev/null || true && \
     catalina.sh run
