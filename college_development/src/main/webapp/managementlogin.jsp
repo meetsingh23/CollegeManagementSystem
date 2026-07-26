@@ -34,7 +34,7 @@
   <input type="reset" value="Cancel">
 </div>
 <br><br>
-<a href="faculty.jsp"><font color="white">SignUP</font></a>
+<a href="management.jsp"><font color="white">SignUP</font></a>
 </center>
 </form>
 </body>
