@@ -45,7 +45,10 @@ RUN echo "CREATE DATABASE IF NOT EXISTS project_development;" > /docker-entrypoi
 
 EXPOSE 8080
 
-# 6. Start MySQL and Tomcat
-CMD service mysql start && \
-    mysql -u root < /docker-entrypoint-initdb.sql 2>/dev/null || mysql -u root -pmeetsingh < /docker-entrypoint-initdb.sql 2>/dev/null || true && \
+# 6. Start MySQL binary directly in background, initialize database, then launch Tomcat
+CMD mkdir -p /var/run/mysqld /var/lib/mysql-files && \
+    chown -R mysql:mysql /var/run/mysqld /var/lib/mysql /var/lib/mysql-files && \
+    mysqld --user=mysql --daemonize && \
+    sleep 3 && \
+    mysql -u root < /docker-entrypoint-initdb.sql 2>/dev/null || true && \
     catalina.sh run
