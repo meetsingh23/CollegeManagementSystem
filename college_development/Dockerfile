@@ -24,13 +24,16 @@ RUN apt-get update && \
 # 2. Cleanup default webapps
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-# 3. Copy WebApp
+# 3. Copy WebApp and Database Schema File
 COPY --from=builder /app/webapp /usr/local/tomcat/webapps/ROOT/
+COPY schema.sql /schema.sql
 
 RUN cp /usr/local/tomcat/webapps/ROOT/welcome.jsp /usr/local/tomcat/webapps/ROOT/index.jsp || true
 
-# 4. Create SQL Init File for Database & Password Setup
+# 4. Create SQL Init File with Tables, Password & Privileges
 RUN echo "CREATE DATABASE IF NOT EXISTS project_development;" > /docker-entrypoint-initdb.sql && \
+    echo "USE project_development;" >> /docker-entrypoint-initdb.sql && \
+    cat /schema.sql >> /docker-entrypoint-initdb.sql && \
     echo "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'meetsingh';" >> /docker-entrypoint-initdb.sql && \
     echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;" >> /docker-entrypoint-initdb.sql && \
     echo "FLUSH PRIVILEGES;" >> /docker-entrypoint-initdb.sql
