@@ -27,10 +27,10 @@ COPY --from=builder /app/webapp /usr/local/tomcat/webapps/ROOT/
 
 RUN cp /usr/local/tomcat/webapps/ROOT/welcome.jsp /usr/local/tomcat/webapps/ROOT/index.jsp || true
 
-# 4. MySQL setup: Root user permission aur database fix
+# 4. MySQL setup: Correct DB name (project_development) and password (meetsingh)
 RUN service mysql start && \
-    mysql -e "CREATE DATABASE IF NOT EXISTS project;" && \
-    mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';" && \
+    mysql -e "CREATE DATABASE IF NOT EXISTS project_development;" && \
+    mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'meetsingh';" && \
     mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;" && \
     mysql -e "FLUSH PRIVILEGES;"
 
