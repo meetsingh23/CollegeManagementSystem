@@ -36,7 +36,7 @@ public class studentlogin extends HttpServlet {
 		int n=Integer.parseInt(request.getParameter("b"));
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
-	        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/project_development", "root", "meetsingh");
+	        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/project_development", "root", "YOUR MYSQL PASS");
 	        PreparedStatement pp=connection.prepareStatement("select * from sign where first_name=? and pass=?");
 	        pp.setString(1, m);
             pp.setInt(2, n);
