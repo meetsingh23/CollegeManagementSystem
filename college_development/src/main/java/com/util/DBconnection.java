@@ -13,7 +13,8 @@ public class DBconnection {
             String user = System.getenv("DB_USER");
             String password = System.getenv("DB_PASS");
 
-            String url = "jdbc:mysql://" + host + ":3306/" + dbName + "?useSSL=false&allowPublicKeyRetrieval=true";
+            String url = "jdbc:mysql://" + host + ":3306/" + dbName 
+                       + "?useSSL=true&requireSSL=false&allowPublicKeyRetrieval=true&connectTimeout=10000&socketTimeout=30000";
 
             Class.forName("com.mysql.cj.jdbc.Driver");
             con = DriverManager.getConnection(url, user, password);
