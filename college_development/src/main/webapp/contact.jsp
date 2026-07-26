@@ -225,7 +225,7 @@ footer{
 <a href="about.jsp">About</a>
 <a href="contact.jsp" class="active">Contact</a>
 <a href="login.jsp">Login</a>
-<a href="retrieve'jsp.jsp">Retrieve</a>
+<a href="retrieve.jsp">Retrieve</a>
 </div>
 
 <div class="banner">

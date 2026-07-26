@@ -192,7 +192,7 @@ footer{
 
 <a href="login.jsp">Login</a>
 
-<a href="retrieve'jsp.jsp">Retrieve</a>
+<a href="retrieve.jsp">Retrieve</a>
 
 </div>
 

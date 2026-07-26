@@ -86,7 +86,7 @@ body{
             <a href="about.jsp">About</a>
             <a href="contact.jsp">Contact</a>
             <a href="login.jsp">Login</a>
-            <a href="retrieve'jsp.jsp">Retrieve</a>
+            <a href="retrieve.jsp">Retrieve</a>
         </div>
     </div>
     <div class="hero-title">
